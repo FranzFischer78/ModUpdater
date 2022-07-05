@@ -1,3 +1,3 @@
 # ModUpdater
 
-Do not redistribute !!!
+Do not redistribute without my consent !!!
