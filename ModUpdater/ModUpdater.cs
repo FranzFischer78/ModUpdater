@@ -367,10 +367,9 @@ public class ModUpdater : Mod
 						LocalVersion = LocalVersion.ToLower().Replace("v", "");
 						RemoteVersion = RemoteVersion.ToLower().Replace("v", "");
 
-						//Debug.Log("prepare for sem versions");
 						string LocalForSem = LocalVersion.Split(' ')[0];
 						string RemoteForSem = RemoteVersion.Split(' ')[0];
-						//Debug.Log(" finished prepare for sem versions");
+
 
 						var localSemVersion = new SemVer(LocalForSem);
 						var remoteSemVersion = new SemVer(RemoteForSem);
@@ -531,6 +530,7 @@ public class ModUpdater : Mod
 							noNewUnofficial = true;
 						}
 
+						//This is just for debugging purpose 
 						Debug.Log(LocalVersion);
 						Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
 
