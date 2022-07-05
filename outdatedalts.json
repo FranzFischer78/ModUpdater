@@ -1,0 +1,21 @@
+{
+  "outdatedmods": [
+    {
+      "slug": "moretrash",
+      "alt-slug": "more-trash-redux"
+    },
+    {
+      "slug": "uiscaler",
+      "alt-slug": "ui-scaler-redux"
+    },
+    {
+      "slug": "nopillars",
+      "alt-slug": "stackable-placeables"
+    }
+
+  ]
+
+
+
+
+}
