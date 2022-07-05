@@ -1,0 +1,40 @@
+{
+  "urls": [
+    {
+      "slug": "biggerplots",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404935554027570/BiggerPlots_1.3.1.rmod"
+    },
+    {
+      "slug": "arashi-fishing-expansion",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404935885365248/modinstaller.arashi-fishing-expansion.rmod"
+    },
+    {
+      "slug": "painteverything",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404937537929266/modinstaller.painteverything.rmod"
+    },
+    {
+      "slug": "waterwheel",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404937709887488/modinstaller.waterwheel-unofficial.rmod"
+    },
+    {
+      "slug": "name-your-shark",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404937961549964/name-your-shark.rmod"
+    },
+    {
+      "slug": "name-your-shark",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404937961549964/name-your-shark.rmod"
+    },
+    {
+      "slug": "recycle-your-metal",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404938276110397/RecycleYourMetal_1.2.0.rmod"
+    },
+    {
+      "slug": "solarpanel",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404938498420766/SolarPanel_1.5.0.rmod"
+    },
+    {
+      "slug": "AugmentedItems",
+      "discord-url": "https://cdn.discordapp.com/attachments/988478285136683008/991404939484069908/AugmentedItems.rmod"
+    }
+  ]
+}

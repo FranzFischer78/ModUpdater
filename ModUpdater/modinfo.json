@@ -1,0 +1,28 @@
+{
+  "name": "ModUpdater",
+  "author": "FranzFischer78",
+  "description": "Allows you to update your mods directly ingame. Can use Extra Settings API to AutoUpdate mods. Check out the complete description on the raftmodding page!",
+  "version": "1.9",
+  "license": "GNU AGPLv3",
+  "icon": "icon.png",
+  "banner": "banner.jpg",
+  "gameVersion": "1.0",
+  "requiredByAllPlayers": false,
+  "updateUrl": "https://www.raftmodding.com/api/v1/mods/modupdater/version.txt",
+  "isModPermanent": true,
+  "excludedFiles": [],
+  "modSettings": [
+    {
+      "type": "checkbox",
+      "name": "autoUpdate",
+      "text": "Automatically update mods",
+      "access": "both",
+      "default": false 
+    },
+    {
+      "type": "button", 
+      "name": "updateAllButton", 
+      "text": "Update all mods" 
+    }
+  ]
+}
