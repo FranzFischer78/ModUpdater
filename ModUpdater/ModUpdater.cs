@@ -366,8 +366,14 @@ public class ModUpdater : Mod
 
 						LocalVersion = LocalVersion.ToLower().Replace("v", "");
 						RemoteVersion = RemoteVersion.ToLower().Replace("v", "");
-						var localSemVersion = new SemVer(LocalVersion);
-						var remoteSemVersion = new SemVer(RemoteVersion);
+
+						//Debug.Log("prepare for sem versions");
+						string LocalForSem = LocalVersion.Split(' ')[0];
+						string RemoteForSem = RemoteVersion.Split(' ')[0];
+						//Debug.Log(" finished prepare for sem versions");
+
+						var localSemVersion = new SemVer(LocalForSem);
+						var remoteSemVersion = new SemVer(RemoteForSem);
 
 						string slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
 						//Debug.Log(slug);
@@ -391,7 +397,9 @@ public class ModUpdater : Mod
 						Debug.Log(LocalVersion);
 						Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
 
-						if ((LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false)
+						//(LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false
+						//Check for version
+						if ((remoteSemVersion > localSemVersion || UnofficialFix) && noNewUnofficial == false)
 						{
 							Debug.Log("[Modupdater] There is a new version for " + modname);
 							notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
@@ -501,6 +509,12 @@ public class ModUpdater : Mod
 						LocalVersion = LocalVersion.ToLower().Replace("v", "");
 						RemoteVersion = RemoteVersion.ToLower().Replace("v", "");
 
+						string LocalForSem = LocalVersion.Split(' ')[0];
+						string RemoteForSem = RemoteVersion.Split(' ')[0];
+
+						var localSemVersion = new SemVer(LocalForSem);
+						var remoteSemVersion = new SemVer(RemoteForSem);
+
 						string slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
 						//Debug.Log(slug);
 
@@ -520,7 +534,7 @@ public class ModUpdater : Mod
 						Debug.Log(LocalVersion);
 						Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
 
-						if ((LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false)
+						if ((remoteSemVersion > localSemVersion || UnofficialFix) && noNewUnofficial == false)
 						{
 							DidAtLeastOneUpdate = true;
 							//A newer version is available. Go ahead and download it
