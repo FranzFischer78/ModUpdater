@@ -48,7 +48,11 @@ public class ModUpdater : Mod
 
 
 		Debug.Log("[Modupdater] Loading unofficial fixes");
-		Task GetFixes = (Task)GetUnofficialFixes();
+		Task GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/unofficialfix.json");
+		await GetFixes;
+		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/unofficialfix.json");
+		await GetFixes;
+		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/unofficialfix.json");
 		await GetFixes;
 		Debug.Log("ModUpdater has been loaded!");
 		Task CheckForUpdatesTask = (Task)CheckForUpdates();
@@ -195,10 +199,10 @@ public class ModUpdater : Mod
 
 
 
-	public static async Task GetUnofficialFixes()
+	public static async Task GetUnofficialFixes(string url)
 	{
 
-		UnityWebRequest uwrrrr = UnityWebRequest.Get("http://share.schafranski.de/raftmodding/unofficialfix.json");
+		UnityWebRequest uwrrrr = UnityWebRequest.Get(url);
 		await uwrrrr.SendWebRequest();
 
 		if (uwrrrr.isNetworkError)
@@ -206,7 +210,7 @@ public class ModUpdater : Mod
 			//Debug.Log("Error While Sending: " + uwrrrr.error);
 			Debug.Log("[Modupdater] Couldn't get unnoficial Fixes. Trying again!");
 			Debug.Log("[Modupdater] Loading unofficial fixes...");
-			Task GetFixes = (Task)GetUnofficialFixes();
+			Task GetFixes = (Task)GetUnofficialFixes(url);
 			await GetFixes;
 
 		}
