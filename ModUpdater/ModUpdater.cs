@@ -22,6 +22,8 @@ public class ModUpdater : Mod
 	public static bool Autoupdate;
 
 	public static string UnofficialFixes;
+	public static string OutdatedMods;
+	public static string OutdatedModsWithAlts;
 
 	public static bool ExtraSettingsAPI_Loaded = false; // This is set to true while the mod's settings are loaded
 
