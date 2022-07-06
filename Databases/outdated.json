@@ -4,9 +4,6 @@
       "slug": "devtools"
     },
     {
-      "slug": "teks-admin-tool"
-    },
-    {
       "slug": "raftonsand"
     },
     {
@@ -27,7 +24,18 @@
     {
       "slug": "hatsmod"
     }
-
+    {
+      "slug": "moretrash"
+    }
+    {
+      "slug": "uiscaler"
+    }
+    {
+      "slug": "nopillars"
+    }
+    {
+      "slug": "craft-from-storage"
+    }
 
   ]
 

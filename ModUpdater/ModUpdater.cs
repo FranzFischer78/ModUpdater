@@ -461,7 +461,29 @@ public class ModUpdater : Mod
 						}
 
 						//Oudated check:
+						if (OutdatedMods.Contains(slug))
+						{
+							Outdated = true;
 
+							if (OutdatedModsWithAlts.Contains(slug))
+							{
+
+								JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
+								JArray item = (JArray)JsonContent["outdatedmods"];
+
+								for (int i = 0; i < item.Count; i++)
+								{
+
+
+									string nameofitem = (string)item[i]["slug"];
+									if (nameofitem == slug)
+									{
+										OutdatedAlt = (string)item[i]["alt-slug"];
+										break;
+									}
+								}
+							}
+						}
 
 
 
@@ -486,8 +508,24 @@ public class ModUpdater : Mod
 							}
 							else
 							{
-								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Update available";
-								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.redColor;
+								if (Outdated)
+								{
+									if (!OutdatedAlt.IsNullOrEmpty())
+									{
+										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uprade available)";
+										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.redColor;
+									}
+									else
+									{
+										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uninstallation recommended)";
+										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+									}
+								}
+								else
+								{
+									HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Update available";
+									HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.redColor;
+								}
 							}
 						}
 						else
