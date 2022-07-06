@@ -37,6 +37,10 @@ public class ModUpdater : Mod
 
 	public static bool DidAtLeastOneUpdate = false;
 
+
+	public static List<ModCache> modCache = new List<ModCache>();
+
+
 	public async void Start()
 	{
 		notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.spinning, "Loading ModUpdater...");
@@ -45,7 +49,7 @@ public class ModUpdater : Mod
 		instanceMod = this;
 		Autoupdate = false;
 
-
+		modCache.Clear();
 
 		Debug.Log("[Modupdater] Loading unofficial fixes");
 		Task GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/unofficialfix.json", "unofficial");
@@ -308,6 +312,10 @@ public class ModUpdater : Mod
 		bool Outdated = false;
 		string OutdatedAlt = "";
 
+		string slug = "";
+
+		bool NeedsUpdate = false;
+
 		int index = 9999;
 
 
@@ -391,10 +399,11 @@ public class ModUpdater : Mod
 						var localSemVersion = new SemVer(LocalForSem);
 						var remoteSemVersion = new SemVer(RemoteForSem);
 
-						string slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
+						slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
 						//Debug.Log(slug);
 
-						bool noNewUnofficial = false;
+
+						//Unofficial fix check
 
 						int UPATCHVersion = 0;
 
@@ -443,9 +452,6 @@ public class ModUpdater : Mod
 
 							}
 
-
-
-
 							//To patch all old versions containing [unofficial]
 							if (LocalVersion.Contains("[unofficial]".ToLower()) == true)
 							{
@@ -454,6 +460,12 @@ public class ModUpdater : Mod
 
 						}
 
+						//Oudated check:
+
+
+
+
+
 						//This is just for debugging purpose 
 						Debug.Log(LocalVersion);
 						
@@ -461,8 +473,9 @@ public class ModUpdater : Mod
 
 						//(LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false
 						//Check for version
-						if ((remoteSemVersion > localSemVersion || UnofficialFix) && noNewUnofficial == false)
+						if (remoteSemVersion > localSemVersion || UnofficialFix)
 						{
+							NeedsUpdate = true;
 							Debug.Log("[Modupdater] There is a new version for " + modname);
 							notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
 
@@ -489,6 +502,21 @@ public class ModUpdater : Mod
 				}
 			}
 		}
+
+		//Assign to ModsCache
+
+		ModCache cacheTMP = new ModCache();
+
+		cacheTMP.slug = slug;
+		cacheTMP.NeedsUpdate = NeedsUpdate;
+		cacheTMP.UnofficialFixAvailable = UnofficialFix;
+		cacheTMP.IsOutdated = Outdated;
+		cacheTMP.AltSlug = OutdatedAlt;
+
+		modCache.Add(cacheTMP);
+
+
+
 	}
 
 
@@ -500,6 +528,14 @@ public class ModUpdater : Mod
 		bool UnofficialFix = false;
 
 
+
+		for(int i=0; i<modCache.Count; i++)
+		{
+			if(modCache[i].slug == "hello")
+			{
+				break;
+			}
+		}
 
 		Directory.CreateDirectory(Temppath);
 
@@ -694,6 +730,25 @@ public class ModUpdater : Mod
 
 
 }
+
+
+[Serializable]
+public class ModCache {
+
+	public string slug;
+	public bool NeedsUpdate;
+	public bool UnofficialFixAvailable;
+	public bool IsOutdated;
+	public string AltSlug;
+
+}
+
+
+
+
+
+
+//Utility Functions
 
 //Got this from: https://gist.github.com/krzys-h/9062552e33dd7bd7fe4a6c12db109a1a Credits going to this guy for saving my life XD
 //I hate async functions XD
