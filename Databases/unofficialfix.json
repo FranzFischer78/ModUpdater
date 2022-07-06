@@ -2,43 +2,53 @@
   "urls": [
     {
       "slug": "biggerplots",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730225026809856/BiggerPlots_1.3.1modded.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730225026809856/BiggerPlots_1.3.1modded.rmod",
+      "version": "1"
     },
     {
       "slug": "painteverything",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730223562981426/modinstaller.painteverythingmodded.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730223562981426/modinstaller.painteverythingmodded.rmod",
+      "version": "1"
     },
     {
       "slug": "waterwheel",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730223772704768/modinstaller.waterwheel-unofficialmodded.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730223772704768/modinstaller.waterwheel-unofficialmodded.rmod",
+      "version": "1"
     },
     {
       "slug": "name-your-shark",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730224125034536/name-your-sharkmodded.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730224125034536/name-your-sharkmodded.rmod",
+      "version": "1"
     },
     {
       "slug": "recycle-your-metal",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730224351510608/RecycleYourMetal_1.2.0modded.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730224351510608/RecycleYourMetal_1.2.0modded.rmod",
+      "version": "1"
     },
     {
       "slug": "solarpanel",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730224557039686/SolarPanel_1.5.0modded.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992730224557039686/SolarPanel_1.5.0modded.rmod",
+      "version": "1"
     },
     {
       "slug": "augmented-items",
-      "discord-url": "http://share.schafranski.de/raftmodding/augmenteditemsmodded.rmod"
+      "discord-url": "http://share.schafranski.de/raftmodding/augmenteditemsmodded.rmod",
+      "version": "1"
     },
     {
       "slug": "custommovingspeed",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992821357245116476/modinstaller.custommovingspeed.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992821357245116476/modinstaller.custommovingspeed.rmod",
+      "version": "1"
     },
     {
       "slug": "islanditems",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/993043878183706654/modinstaller.islanditems.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/993043878183706654/modinstaller.islanditems.rmod",
+      "version": "1"
     },
     {
       "slug": "bettercontrols",
-      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992821357631000706/modinstaller.bettercontrols.rmod"
+      "discord-url": "https://cdn.discordapp.com/attachments/992053073587486761/992821357631000706/modinstaller.bettercontrols.rmod",
+      "version": "1"
     }
   ]
 }

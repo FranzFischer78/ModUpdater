@@ -48,11 +48,11 @@ public class ModUpdater : Mod
 
 
 		Debug.Log("[Modupdater] Loading unofficial fixes");
-		Task GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/unofficialfix.json");
+		Task GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/unofficialfix.json", "unofficial");
 		await GetFixes;
-		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/unofficialfix.json");
+		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/outdated.json", "outdated");
 		await GetFixes;
-		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/unofficialfix.json");
+		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/outdatedalts.json", "outdatedAlts");
 		await GetFixes;
 		Debug.Log("ModUpdater has been loaded!");
 		Task CheckForUpdatesTask = (Task)CheckForUpdates();
@@ -198,8 +198,8 @@ public class ModUpdater : Mod
 	}
 
 
-
-	public static async Task GetUnofficialFixes(string url)
+	//This is actually no more only for unofficial fixes. It's for getting all the Database stuff
+	public static async Task GetUnofficialFixes(string url, string type)
 	{
 
 		UnityWebRequest uwrrrr = UnityWebRequest.Get(url);
@@ -210,14 +210,28 @@ public class ModUpdater : Mod
 			//Debug.Log("Error While Sending: " + uwrrrr.error);
 			Debug.Log("[Modupdater] Couldn't get unnoficial Fixes. Trying again!");
 			Debug.Log("[Modupdater] Loading unofficial fixes...");
-			Task GetFixes = (Task)GetUnofficialFixes(url);
+			Task GetFixes = (Task)GetUnofficialFixes(url, type);
 			await GetFixes;
 
 		}
 		else
 		{
 			Debug.Log("[Modupdater] Got list of unofficial Fixes!");
-			UnofficialFixes = uwrrrr.downloadHandler.text;
+
+			switch (type)
+			{
+				case "unofficial":
+					UnofficialFixes = uwrrrr.downloadHandler.text;
+					break;
+				case "outdated":
+					OutdatedMods = uwrrrr.downloadHandler.text;
+					break;
+				case "outdatedAlts":
+					OutdatedModsWithAlts = uwrrrr.downloadHandler.text;
+					break;
+
+			}
+
 			//Debug.Log(UnofficialFixes);
 		}
 	}
@@ -291,13 +305,13 @@ public class ModUpdater : Mod
 		HNotification notification2;
 
 		bool UnofficialFix = false;
-
-		Directory.CreateDirectory(Temppath);
+		bool Outdated = false;
+		string OutdatedAlt = "";
 
 		int index = 9999;
 
 
-		Debug.Log("[Modupdater] Update mod " + modname);
+		Debug.Log("[Modupdater] Check for Updates for " + modname);
 
 
 
@@ -310,9 +324,6 @@ public class ModUpdater : Mod
 			{
 				index = i;
 			}
-
-
-
 		}
 
 		if (index == 9999)
@@ -359,7 +370,7 @@ public class ModUpdater : Mod
 
 					if (WWWResult.ToString().ToLower().Contains("404"))
 					{
-						Debug.Log("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me and the author... Raft is not Shark Food got this issue.");
+						Debug.Log("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me and the author... Raft is not Shark Food and Lantern Physics got this issue.");
 						//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me (FranzFischer#6710) and the author... Raft is not Shark Food got this issue." + modname, 5, HNotify.ErrorSprite);
 						HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
 						HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
@@ -385,22 +396,68 @@ public class ModUpdater : Mod
 
 						bool noNewUnofficial = false;
 
+						int UPATCHVersion = 0;
+
 						if (UnofficialFixes.Contains(slug))
 						{
-							UnofficialFix = true;
+							JObject JsonContent = JObject.Parse(UnofficialFixes);
+							JArray item = (JArray)JsonContent["urls"];
+
+							for (int i = 0; i < item.Count; i++)
+							{
+
+
+								string nameofitem = (string)item[i]["slug"];
+								if (nameofitem == slug)
+								{
+									UPATCHVersion = Convert.ToInt32((string)item[i]["version"]);
+									Debug.Log(UPATCHVersion);
+									break;
+								}
+								else
+								{
+
+								}
+							}
+							int LocalUpatch = 0;
+							if (LocalVersion.Contains("UPATCH".ToLower()) == true)
+							{
+								char[] separators = new char[] { '[', ']' };
+								Debug.Log(LocalVersion.Split(separators)[1].Split('H')[1]);
+
+								LocalUpatch = Convert.ToInt32(LocalVersion.Split(separators)[1].Split('H')[1]);
+
+								if (UPATCHVersion != 0 && LocalUpatch != 0)
+								{
+
+									if (UPATCHVersion > LocalUpatch)
+									{
+										UnofficialFix = true;
+									}
+									else
+									{
+										UnofficialFix = false;
+									}
+
+								}
+
+							}
+
+
+
+
+							//To patch all old versions containing [unofficial]
+							if (LocalVersion.Contains("[unofficial]".ToLower()) == true)
+							{
+								UnofficialFix = true;
+							}
 
 						}
-						//This is crap XD
-						if (LocalVersion.Contains("[unofficial]".ToLower()) == true)
-						{
-							UnofficialFix = false;
-							noNewUnofficial = true;
-						}
-
 
 						//This is just for debugging purpose 
 						Debug.Log(LocalVersion);
-						Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
+						
+						//Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
 
 						//(LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false
 						//Check for version
@@ -441,6 +498,8 @@ public class ModUpdater : Mod
 
 
 		bool UnofficialFix = false;
+
+
 
 		Directory.CreateDirectory(Temppath);
 
@@ -704,16 +763,3 @@ public static class ExtensionMethods
 		return new UnityAssetBundleRequestAwaiter(asyncOp);
 	}
 }
-
-/*[HarmonyPatch(typeof(HMLLibrary.ModManagerPage), nameof(HMLLibrary.ModManagerPage.RefreshMods))]
-class Patch
-{
-	[HarmonyPostfix]
-	static void Postfix()
-	{
-		ModUpdater.instanceMod.StartCoroutine(ModUpdater.instanceMod.LoadUpdateButtons());
-	}
-}*/
-
-
-
