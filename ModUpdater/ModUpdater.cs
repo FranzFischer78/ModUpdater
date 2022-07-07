@@ -453,7 +453,7 @@ public class ModUpdater : Mod
 							}
 
 							//To patch all old versions containing [unofficial]
-							if (LocalVersion.Contains("[unofficial]".ToLower()) == true)
+							if (LocalVersion.Contains("[unofficial]".ToLower()) == true || (LocalVersion.Contains("[unofficial]".ToLower()) == false && LocalVersion.Contains("UPATCH".ToLower()) == false))
 							{
 								UnofficialFix = true;
 							}
@@ -716,8 +716,10 @@ public class ModUpdater : Mod
 					//Clean up old mod
 					Debug.Log("Debug modinfo.filename");
 					Debug.Log(HMLLibrary.ModManagerPage.modList[index].modinfo.modFile.ToString());
-					Debug.Log(HMLLibrary.ModManagerPage.modList[index].modinfo.modFiles.ToString());
 
+					File.Delete(HMLLibrary.ModManagerPage.modList[index].modinfo.modFile.ToString());
+
+					//Copy new one
 					File.Copy(Temppath + @"\" + filename, @"mods\" + filename, true);
 					Debug.Log("[Modupdater] Finished Downloading " + modname);
 					notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Finished Downloading " + modname, 5, HNotify.CheckSprite);
