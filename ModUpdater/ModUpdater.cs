@@ -432,9 +432,13 @@ public class ModUpdater : Mod
 							if (LocalVersion.Contains("UPATCH".ToLower()) == true)
 							{
 								char[] separators = new char[] { '[', ']' };
-								Debug.Log(LocalVersion.Split(separators)[1].Split('H')[1]);
 
-								LocalUpatch = Convert.ToInt32(LocalVersion.Split(separators)[1].Split('H')[1]);
+								/*Debug.Log(LocalVersion.Split(separators)[0]);
+								Debug.Log(LocalVersion.Split(separators)[1]);
+
+								Debug.Log(LocalVersion.Split(separators)[1].Split('h')[1]);*/
+
+								LocalUpatch = Convert.ToInt32(LocalVersion.Split(separators)[1].Split('h')[1]);
 
 								if (UPATCHVersion != 0 && LocalUpatch != 0)
 								{
