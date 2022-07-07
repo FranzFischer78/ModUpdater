@@ -490,18 +490,18 @@ public class ModUpdater : Mod
 
 						//This is just for debugging purpose 
 						Debug.Log(LocalVersion);
-						
+
 						//Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
 
 						//(LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false
 						//Check for version
-						if (remoteSemVersion > localSemVersion || UnofficialFix)
+						if (remoteSemVersion > localSemVersion || UnofficialFix || Outdated)
 						{
 							NeedsUpdate = true;
 							Debug.Log("[Modupdater] There is a new version for " + modname);
 							notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
 
-							if(UnofficialFix == true)
+							if (UnofficialFix == true)
 							{
 								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unofficial Fix available!";
 								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.blueColor;
@@ -563,22 +563,12 @@ public class ModUpdater : Mod
 		HNotification notification2;
 
 
-		bool UnofficialFix = false;
-
-
-
-		for(int i=0; i<modCache.Count; i++)
-		{
-			if(modCache[i].slug == "hello")
-			{
-				break;
-			}
-		}
+		string slug;
 
 		Directory.CreateDirectory(Temppath);
 
 		int index = 9999;
-
+		int cacheIndex = 9999;
 
 		Debug.Log("[Modupdater] Update mod " + modname);
 
@@ -604,174 +594,156 @@ public class ModUpdater : Mod
 			//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "The mod failed to Update! Does it even exist?", 5, HNotify.ErrorSprite);
 
 		}
-		else
+		slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
+
+
+		for (int i = 0; i < modCache.Count; i++)
 		{
-			if (HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Contains("YOUR-MOD-SLUG-HERE"))
+			if (modCache[i].slug == slug)
 			{
-				Debug.Log("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours?");
-				//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours?", 5, HNotify.ErrorSprite);
-
-			}
-			else
-			{
-
-
-				UnityWebRequest uwr = UnityWebRequest.Get(HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl);
-				await uwr.SendWebRequest();
-
-				if (uwr.isNetworkError)
-				{
-					Debug.Log("[Modupdater] Error While Sending: " + uwr.error);
-					Debug.Log("[Modupdater] Couldn't update mod: " + modname);
-					//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Couldn't update mod: " + modname, 5, HNotify.ErrorSprite);
-
-				}
-				else
-				{
-					//Debug.Log("Received: " + uwr.downloadHandler.text);
-					WWWResult = uwr.downloadHandler.text;
-					//Debug.Log(WWWResult.ToString());
-
-					if (WWWResult.ToString().ToLower().Contains("404"))
-					{
-						Debug.Log("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me and the author... Raft is not Shark Food got this issue.");
-						//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me (FranzFischer#6710) and the author... Raft is not Shark Food got this issue." + modname, 5, HNotify.ErrorSprite);
-
-					}
-					else
-					{
-
-						string LocalVersion = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.version;
-						string RemoteVersion = WWWResult.ToString();
-
-						LocalVersion = LocalVersion.ToLower().Replace("v", "");
-						RemoteVersion = RemoteVersion.ToLower().Replace("v", "");
-
-						string LocalForSem = LocalVersion.Split(' ')[0];
-						string RemoteForSem = RemoteVersion.Split(' ')[0];
-
-						var localSemVersion = new SemVer(LocalForSem);
-						var remoteSemVersion = new SemVer(RemoteForSem);
-
-						string slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
-						//Debug.Log(slug);
-
-						bool noNewUnofficial = false;
-
-						if (UnofficialFixes.Contains(slug))
-						{
-							UnofficialFix = true;
-
-						}
-						if (LocalVersion.Contains("[unofficial]".ToLower()) == true)
-						{
-							UnofficialFix = false;
-							noNewUnofficial = true;
-						}
-
-						//This is just for debugging purpose 
-						Debug.Log(LocalVersion);
-						Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
-
-						if ((remoteSemVersion > localSemVersion || UnofficialFix) && noNewUnofficial == false)
-						{
-							DidAtLeastOneUpdate = true;
-							//A newer version is available. Go ahead and download it
-							Debug.Log("[Modupdater] Download new Version");
-							string url = "";
-							if (UnofficialFix)
-							{
-								Debug.Log("[Modupdater] Download unofficial fix");
-								JObject JsonContent = JObject.Parse(UnofficialFixes);
-								JArray item = (JArray)JsonContent["urls"];
-
-								for (int i = 0; i < item.Count; i++)
-								{
-
-
-									string nameofitem = (string)item[i]["slug"];
-									if (nameofitem == slug)
-									{
-										url = (string)item[i]["discord-url"];
-										break;
-									}
-									else
-									{
-
-									}
-								}
-								if (url.IsNullOrEmpty())
-								{
-									Debug.Log("[Modupdater] Unexpected error downloading the unofficial fix");
-									url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
-								}
-
-
-							}
-							else
-							{
-								//Donwload example url https://www.raftmodding.com/mods/itemspawner/download?ignoreVirusScan=true
-								url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
-							}
-
-							//Debug.Log(url);
-							UnityWebRequest uwrr = new UnityWebRequest(url);
-							uwrr.downloadHandler = new DownloadHandlerBuffer();
-							Debug.Log("[Modupdater] Downloading...");
-							await uwrr.SendWebRequest();
-
-
-
-							if (uwrr.isNetworkError)
-							{
-								Debug.Log("[Modupdater] Error While Sending: " + uwrr.error);
-								Debug.Log("[Modupdater] Couldn't update mod: " + modname + ". No bytes found!");
-								//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Couldn't update mod: " + modname + ". No bytes found!", 5, HNotify.ErrorSprite);
-
-
-							}
-							else
-							{
-
-								// retrieve results as binary data
-
-
-
-								byte[] results = uwrr.downloadHandler.data;
-
-								string filename = "modinstaller." + slug + ".rmod";
-								System.IO.File.WriteAllBytes(Temppath + @"\" + filename, results);
-								File.Copy(Temppath + @"\" + filename, @"mods\" + filename, true);
-								Debug.Log("[Modupdater] Finished Downloading " + modname);
-								notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Finished Downloading " + modname, 5, HNotify.CheckSprite);
-
-
-							}
-						}
-						else
-						{
-							Debug.Log("[Modupdater] There is no new version for " + modname);
-							if (OneModOnly)
-							{
-								notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
-							}
-
-						}
-					}
-
-				}
+				cacheIndex = i;
+				break;
 			}
 		}
 
 
-	}
+		if (modCache[cacheIndex].NeedsUpdate)
+		{
+			DidAtLeastOneUpdate = true;
 
+			//A newer version is available. Go ahead and download it
+			Debug.Log("[Modupdater] Download new Version");
+			string url = "";
+			if (modCache[cacheIndex].UnofficialFixAvailable)
+			{
+				Debug.Log("[Modupdater] Download unofficial fix");
+				JObject JsonContent = JObject.Parse(UnofficialFixes);
+				JArray item = (JArray)JsonContent["urls"];
+
+				for (int i = 0; i < item.Count; i++)
+				{
+
+
+					string nameofitem = (string)item[i]["slug"];
+					if (nameofitem == slug)
+					{
+						url = (string)item[i]["discord-url"];
+						break;
+					}
+
+				}
+				if (url.IsNullOrEmpty())
+				{
+					Debug.Log("[Modupdater] Unexpected error downloading the unofficial fix");
+					//url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
+				}
+
+
+			}
+			else if (modCache[cacheIndex].IsOutdated && !modCache[cacheIndex].AltSlug.IsNullOrEmpty())
+			{
+				Debug.Log("[Modupdater] Download alternative to Outdated Mod");
+				JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
+				JArray item = (JArray)JsonContent["outdatedmods"];
+
+				for (int i = 0; i < item.Count; i++)
+				{
+
+
+					string nameofitem = (string)item[i]["slug"];
+					if (nameofitem == slug)
+					{
+						url = "https://www.raftmodding.com/mods/" + (string)item[i]["alt-slug"] + "/download?ignoreVirusScan=true";
+						break;
+					}
+
+				}
+				if (url.IsNullOrEmpty())
+				{
+					Debug.Log("[Modupdater] Unexpected error while downloading the an outdated mod upgrade");
+					//url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
+				}
+			}
+			else
+			{
+				//Donwload example url https://www.raftmodding.com/mods/itemspawner/download?ignoreVirusScan=true
+				url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
+			}
+
+			Debug.Log(url);
+
+			if (!url.IsNullOrEmpty())
+			{
+				UnityWebRequest uwrr = new UnityWebRequest(url);
+				uwrr.downloadHandler = new DownloadHandlerBuffer();
+				Debug.Log("[Modupdater] Downloading...");
+				await uwrr.SendWebRequest();
+
+
+
+				if (uwrr.isNetworkError)
+				{
+					Debug.Log("[Modupdater] Error While Sending: " + uwrr.error);
+					Debug.Log("[Modupdater] Couldn't update mod: " + modname + ". No bytes found!");
+					//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Couldn't update mod: " + modname + ". No bytes found!", 5, HNotify.ErrorSprite);
+
+
+				}
+				else
+				{
+
+					// retrieve results as binary data
+
+
+					string filename = "";
+					byte[] results = uwrr.downloadHandler.data;
+
+					if (modCache[cacheIndex].IsOutdated && !modCache[cacheIndex].AltSlug.IsNullOrEmpty())
+					{
+						filename = "modinstaller." + modCache[cacheIndex].AltSlug + ".rmod";
+					}
+					else
+					{
+
+						filename = "modinstaller." + slug + ".rmod";
+
+					}
+
+					Debug.Log(filename);
+
+					System.IO.File.WriteAllBytes(Temppath + @"\" + filename, results);
+
+					//Clean up old mod
+					Debug.Log("Debug modinfo.filename");
+					Debug.Log(HMLLibrary.ModManagerPage.modList[index].modinfo.modFile.ToString());
+					Debug.Log(HMLLibrary.ModManagerPage.modList[index].modinfo.modFiles.ToString());
+
+					File.Copy(Temppath + @"\" + filename, @"mods\" + filename, true);
+					Debug.Log("[Modupdater] Finished Downloading " + modname);
+					notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Finished Downloading " + modname, 5, HNotify.CheckSprite);
+
+
+				}
+			}
+		}
+		else
+		{
+			Debug.Log("[Modupdater] There is no new version for " + modname);
+			if (OneModOnly)
+			{
+				notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
+			}
+
+		}
+	}
 
 }
 
 
+
 [Serializable]
-public class ModCache {
+public class ModCache
+{
 
 	public string slug;
 	public bool NeedsUpdate;
