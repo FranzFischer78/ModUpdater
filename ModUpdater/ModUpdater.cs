@@ -40,12 +40,30 @@ public class ModUpdater : Mod
 
 	public static List<ModCache> modCache = new List<ModCache>();
 
+	GameObject disclaimerWin;
+
 
 	public async void Start()
 	{
 		notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.spinning, "Loading ModUpdater...");
+		//HNotification notification7 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Disclaimer: The Modupdater accesses your filesystem. Although it is unlikely to happen, me and the Raftmodding Team are not responsible for any damage caused to your computer by the modupdater!", 10, HNotify.ErrorSprite);
+		AssetBundleCreateRequest request = AssetBundle.LoadFromMemoryAsync(GetEmbeddedFileBytes("modupdatedlbtn.assets"));
+		await request;
+		asset = request.assetBundle;
 
 
+		if (PlayerPrefs.HasKey("ModUpdaterAccept"))
+		{
+			Debug.Log("The key exists");
+		}
+		else
+		{
+			disclaimerWin = asset.LoadAsset<GameObject>("DisclaimerWin");
+			Instantiate(disclaimerWin);
+			disclaimerWin.transform.Find("AcceptDisclaim").GetComponent<Button>().onClick.AddListener(AcceptDisc);
+			disclaimerWin.transform.Find("DeclineDisclaim").GetComponent<Button>().onClick.AddListener(DeclineDisc);
+		}
+		 
 		instanceMod = this;
 		Autoupdate = false;
 
@@ -64,9 +82,7 @@ public class ModUpdater : Mod
 		StartCoroutine(InitAutoUpdate());
 		//Debug.Log("Autoupdate: " + Autoupdate);
 
-		AssetBundleCreateRequest request = AssetBundle.LoadFromMemoryAsync(GetEmbeddedFileBytes("modupdatedlbtn.assets"));
-		await request;
-		asset = request.assetBundle;
+		
 
 
 		//(harmony = new Harmony(id)).PatchAll(System.Reflection.Assembly.GetExecutingAssembly());
@@ -79,6 +95,17 @@ public class ModUpdater : Mod
 
 
 
+	}
+
+	public void AcceptDisc()
+	{
+		PlayerPrefs.SetString("ModUpdaterAccept", "true");
+	}
+
+	public void DeclineDisc()
+	{
+		System.Diagnostics.Process.Start("explorer.exe", Path.GetFullPath(HMLLibrary.HLib.path_modsFolder));
+		Application.Quit();
 	}
 
 	public IEnumerator LoadUpdateButtons()
@@ -279,7 +306,7 @@ public class ModUpdater : Mod
 		}
 		else
 		{
-			notification3 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "All of your mods are up to date!", 5, HNotify.CheckSprite);
+			//notification3 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "All of your mods are up to date!", 5, HNotify.CheckSprite);
 		}
 	}
 
@@ -298,7 +325,7 @@ public class ModUpdater : Mod
 		}
 		else
 		{
-			notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "No new version is available!", 5, HNotify.CheckSprite);
+			//notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "No new version is available!", 5, HNotify.CheckSprite);
 		}
 	}
 
