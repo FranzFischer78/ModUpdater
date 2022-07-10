@@ -9,6 +9,8 @@ using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
+using System.Diagnostics;
+using Debug = UnityEngine.Debug;
 
 public class ModUpdater : Mod
 {
@@ -43,6 +45,10 @@ public class ModUpdater : Mod
 	GameObject disclaimerWin;
 
 
+
+
+
+
 	public async void Start()
 	{
 		notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.spinning, "Loading ModUpdater...");
@@ -54,16 +60,14 @@ public class ModUpdater : Mod
 
 		if (PlayerPrefs.HasKey("ModUpdaterAccept"))
 		{
-			Debug.Log("The key exists");
+			Debug.Log("Already accepted tos");
 		}
 		else
 		{
-			disclaimerWin = asset.LoadAsset<GameObject>("DisclaimerWin");
-			Instantiate(disclaimerWin);
-			disclaimerWin.transform.Find("AcceptDisclaim").GetComponent<Button>().onClick.AddListener(AcceptDisc);
-			disclaimerWin.transform.Find("DeclineDisclaim").GetComponent<Button>().onClick.AddListener(DeclineDisc);
+			StartCoroutine(disclaimer());
+
 		}
-		 
+
 		instanceMod = this;
 		Autoupdate = false;
 
@@ -99,13 +103,30 @@ public class ModUpdater : Mod
 
 	public void AcceptDisc()
 	{
+		Debug.Log("AcceptButton");
 		PlayerPrefs.SetString("ModUpdaterAccept", "true");
+		Destroy(disclaimerWin);
 	}
 
 	public void DeclineDisc()
 	{
-		System.Diagnostics.Process.Start("explorer.exe", Path.GetFullPath(HMLLibrary.HLib.path_modsFolder));
+		Debug.Log("DenyButton");
+		Process.Start("explorer.exe", Path.GetFullPath(HMLLibrary.HLib.path_modsFolder));
 		Application.Quit();
+		Destroy(disclaimerWin);
+	}
+
+	public IEnumerator disclaimer()
+	{
+		disclaimerWin = asset.LoadAsset<GameObject>("DisclaimerCanvas");
+		//Transform parent = GameObject.Find("RMLMainMenu").transform;
+		GameObject disclaimerInst =  Instantiate(disclaimerWin);
+		//disclaimerInst.transform.SetAsLastSibling();
+		//disclaimerWin.transform.Find("DisclaimerWin").gameObject.transform.Find("AcceptDisclaim").gameObject.GetComponent<Button>().onClick.AddListener(AcceptDisc);
+		//disclaimerWin.transform.Find("DisclaimerWin").gameObject.transform.Find("DeclineDisclaim").gameObject.GetComponent<Button>().onClick.AddListener(DeclineDisc);
+		PlayerPrefs.SetString("ModUpdaterAccept", "true");
+		yield return new WaitForSeconds(8);
+		Destroy(disclaimerInst.gameObject);
 	}
 
 	public IEnumerator LoadUpdateButtons()
