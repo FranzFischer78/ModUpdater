@@ -59,6 +59,11 @@
       "slug": "teks-admin-tool",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.teks-admin-tool.rmod",
       "version": "1"
+    },
+    {
+      "slug": "longerdaynightcycles",
+      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.longerdaynightcycles.rmod",
+      "version": "1"
     }
   ]
 }
