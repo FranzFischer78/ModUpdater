@@ -10,6 +10,7 @@ using UnityEngine.Networking;
 using UnityEngine.UI;
 using Debug = UnityEngine.Debug;
 
+
 public class ModUpdater : Mod
 {
 
@@ -20,6 +21,7 @@ public class ModUpdater : Mod
 	public static HNotification notification;
 
 	public static bool Autoupdate;
+	public static bool Logging;
 
 	public static string UnofficialFixes;
 	public static string OutdatedMods;
@@ -58,7 +60,7 @@ public class ModUpdater : Mod
 
 		if (PlayerPrefs.HasKey("ModUpdaterAccept"))
 		{
-			Debug.Log("Already accepted tos");
+			Debug.Log("[Modupdater] Already accepted tos");
 		}
 		else
 		{
@@ -68,6 +70,7 @@ public class ModUpdater : Mod
 
 		instanceMod = this;
 		Autoupdate = false;
+		Logging = false;
 
 		modCache.Clear();
 
@@ -227,6 +230,7 @@ public class ModUpdater : Mod
 		Debug.Log("[Modupdater] Extra settings found");
 		//Debug.Log("Checkbox state: " + ExtraSettingsAPI_GetCheckboxState("autoUpdate"));
 		Autoupdate = ExtraSettingsAPI_GetCheckboxState("autoUpdate");
+		Logging = ExtraSettingsAPI_GetCheckboxState("ModUpdaterLogging");
 		SettingLoaded = true;
 
 
@@ -351,7 +355,7 @@ public class ModUpdater : Mod
 		int index = 9999;
 
 
-		Debug.Log("[Modupdater] Check for Updates for " + modname);
+		UtilityMethods.DebugLogging("[Modupdater] Check for Updates for " + modname);
 
 
 
@@ -368,7 +372,7 @@ public class ModUpdater : Mod
 
 		if (index == 9999)
 		{
-			Debug.Log("[Modupdater] The mod failed to Update! Does it even exist?");
+			UtilityMethods.DebugLogging("[Modupdater] The mod failed to Update! Does it even exist?");
 			//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "The mod failed to Update! Does it even exist?", 5, HNotify.ErrorSprite);
 			HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown";
 
@@ -381,7 +385,7 @@ public class ModUpdater : Mod
 		{
 			if (HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Contains("YOUR-MOD-SLUG-HERE"))
 			{
-				Debug.Log("[Modupdater] Update URL contains a wrong slug! Please ping the mod author!");
+				UtilityMethods.DebugLogging("[Modupdater] Update URL contains a wrong slug! Please ping the mod author!");
 				//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours?", 5, HNotify.ErrorSprite);
 				HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
 				HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
@@ -389,7 +393,7 @@ public class ModUpdater : Mod
 			}
 			else if (HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.IsNullOrEmpty())
 			{
-				Debug.Log("[Modupdater] Update URL is empty! Please ping the mod author!");
+				UtilityMethods.DebugLogging("[Modupdater] Update URL is empty! Please ping the mod author!");
 				//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours?", 5, HNotify.ErrorSprite);
 				HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
 				HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
@@ -404,8 +408,8 @@ public class ModUpdater : Mod
 
 				if (uwr.isNetworkError)
 				{
-					Debug.Log("[Modupdater] Error While Sending: " + uwr.error);
-					Debug.Log("[Modupdater] Couldn't update mod: " + modname);
+					UtilityMethods.DebugLogging("[Modupdater] Error While Sending: " + uwr.error);
+					UtilityMethods.DebugLogging("[Modupdater] Couldn't update mod: " + modname);
 					//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Couldn't update mod: " + modname, 5, HNotify.ErrorSprite);
 					HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown";
 					HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
@@ -418,7 +422,7 @@ public class ModUpdater : Mod
 
 					if (WWWResult.ToString().ToLower().Contains("404"))
 					{
-						Debug.Log("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me and the author... Raft is not Shark Food and Lantern Physics got this issue.");
+						UtilityMethods.DebugLogging("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me and the author... Raft is not Shark Food and Lantern Physics got this issue.");
 						//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me (FranzFischer#6710) and the author... Raft is not Shark Food got this issue." + modname, 5, HNotify.ErrorSprite);
 						HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
 						HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
@@ -461,7 +465,7 @@ public class ModUpdater : Mod
 								if (nameofitem == slug)
 								{
 									UPATCHVersion = Convert.ToInt32((string)item[i]["version"]);
-									Debug.Log(UPATCHVersion);
+									UtilityMethods.DebugLogging(UPATCHVersion.ToString());
 									break;
 								}
 								else
@@ -534,7 +538,7 @@ public class ModUpdater : Mod
 
 
 						//This is just for debugging purpose 
-						Debug.Log(LocalVersion);
+						UtilityMethods.DebugLogging(LocalVersion);
 
 						//Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
 
@@ -543,7 +547,7 @@ public class ModUpdater : Mod
 						if (remoteSemVersion > localSemVersion || UnofficialFix || Outdated)
 						{
 							NeedsUpdate = true;
-							Debug.Log("[Modupdater] There is a new version for " + modname);
+							UtilityMethods.DebugLogging("[Modupdater] There is a new version for " + modname);
 							notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
 
 							if (UnofficialFix == true)
@@ -575,7 +579,7 @@ public class ModUpdater : Mod
 						}
 						else
 						{
-							Debug.Log("[Modupdater] There is no new version for " + modname);
+							UtilityMethods.DebugLogging("[Modupdater] There is no new version for " + modname);
 							//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
 							HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Up to date";
 							HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.greenColor;
@@ -616,7 +620,7 @@ public class ModUpdater : Mod
 		int index = 9999;
 		int cacheIndex = 9999;
 
-		Debug.Log("[Modupdater] Update mod " + modname);
+		UtilityMethods.DebugLogging("[Modupdater] Update mod " + modname);
 
 
 		
@@ -637,7 +641,7 @@ public class ModUpdater : Mod
 
 		if (index == 9999)
 		{
-			Debug.Log("[Modupdater] The mod failed to Update! Does it even exist?");
+			UtilityMethods.DebugLogging("[Modupdater] The mod failed to Update! Does it even exist?");
 			//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "The mod failed to Update! Does it even exist?", 5, HNotify.ErrorSprite);
 
 		}
@@ -648,7 +652,7 @@ public class ModUpdater : Mod
 
 			if (HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.IsNullOrEmpty())
 			{
-				Debug.Log("[Modupdater] The mods update url is misconfigured!");
+				UtilityMethods.DebugLogging("[Modupdater] The mods update url is misconfigured!");
 			}
 			else
 			{
@@ -669,7 +673,7 @@ public class ModUpdater : Mod
 
 				if (cacheIndex == 9999)
 				{
-					Debug.Log("[Modupdater] The mod failed to Update! Does it even exist?");
+					UtilityMethods.DebugLogging("[Modupdater] The mod failed to Update! Does it even exist?");
 					//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "The mod failed to Update! Does it even exist?", 5, HNotify.ErrorSprite);
 
 				}
@@ -677,7 +681,7 @@ public class ModUpdater : Mod
 				{
 					if (modCache[cacheIndex].misconfigured)
 					{
-						Debug.Log("[Modupdater] The mod is misconfigured!");
+						UtilityMethods.DebugLogging("[Modupdater] The mod is misconfigured!");
 					}
 					else
 					{
@@ -694,11 +698,11 @@ public class ModUpdater : Mod
 							DidAtLeastOneUpdate = true;
 
 							//A newer version is available. Go ahead and download it
-							Debug.Log("[Modupdater] Download new Version");
+							UtilityMethods.DebugLogging("[Modupdater] Download new Version");
 							string url = "";
 							if (modCache[cacheIndex].UnofficialFixAvailable)
 							{
-								Debug.Log("[Modupdater] Download unofficial fix");
+								UtilityMethods.DebugLogging("[Modupdater] Download unofficial fix");
 								JObject JsonContent = JObject.Parse(UnofficialFixes);
 								JArray item = (JArray)JsonContent["urls"];
 
@@ -716,7 +720,7 @@ public class ModUpdater : Mod
 								}
 								if (url.IsNullOrEmpty())
 								{
-									Debug.Log("[Modupdater] Unexpected error downloading the unofficial fix");
+									UtilityMethods.DebugLogging("[Modupdater] Unexpected error downloading the unofficial fix");
 									//url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
 								}
 
@@ -724,7 +728,7 @@ public class ModUpdater : Mod
 							}
 							else if (modCache[cacheIndex].IsOutdated && !modCache[cacheIndex].AltSlug.IsNullOrEmpty())
 							{
-								Debug.Log("[Modupdater] Download alternative to Outdated Mod");
+								UtilityMethods.DebugLogging("[Modupdater] Download alternative to Outdated Mod");
 								JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
 								JArray item = (JArray)JsonContent["outdatedmods"];
 
@@ -742,7 +746,7 @@ public class ModUpdater : Mod
 								}
 								if (url.IsNullOrEmpty())
 								{
-									Debug.Log("[Modupdater] Unexpected error while downloading the an outdated mod upgrade");
+									UtilityMethods.DebugLogging("[Modupdater] Unexpected error while downloading the an outdated mod upgrade");
 									//url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
 								}
 							}
@@ -752,21 +756,21 @@ public class ModUpdater : Mod
 								url = "https://www.raftmodding.com/mods/" + slug + "/download?ignoreVirusScan=true";
 							}
 
-							Debug.Log(url);
+							UtilityMethods.DebugLogging(url);
 
 							if (!url.IsNullOrEmpty())
 							{
 								UnityWebRequest uwrr = new UnityWebRequest(url);
 								uwrr.downloadHandler = new DownloadHandlerBuffer();
-								Debug.Log("[Modupdater] Downloading...");
+								UtilityMethods.DebugLogging("[Modupdater] Downloading...");
 								await uwrr.SendWebRequest();
 
 
 
 								if (uwrr.isNetworkError)
 								{
-									Debug.Log("[Modupdater] Error While Sending: " + uwrr.error);
-									Debug.Log("[Modupdater] Couldn't update mod: " + modname + ". No bytes found!");
+									UtilityMethods.DebugLogging("[Modupdater] Error While Sending: " + uwrr.error);
+									UtilityMethods.DebugLogging("[Modupdater] Couldn't update mod: " + modname + ". No bytes found!");
 									//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Couldn't update mod: " + modname + ". No bytes found!", 5, HNotify.ErrorSprite);
 
 
@@ -791,19 +795,19 @@ public class ModUpdater : Mod
 
 									}
 
-									Debug.Log(filename);
+									UtilityMethods.DebugLogging(filename);
 
 									System.IO.File.WriteAllBytes(Temppath + @"\" + filename, results);
 
 									//Clean up old mod
-									Debug.Log("Debug modinfo.filename");
-									Debug.Log(HMLLibrary.ModManagerPage.modList[index].modinfo.modFile.ToString());
+									UtilityMethods.DebugLogging("Debug modinfo.filename");
+									UtilityMethods.DebugLogging(HMLLibrary.ModManagerPage.modList[index].modinfo.modFile.ToString());
 
 									File.Delete(HMLLibrary.ModManagerPage.modList[index].modinfo.modFile.ToString());
 
 									//Copy new one
 									File.Copy(Temppath + @"\" + filename, @"mods\" + filename, true);
-									Debug.Log("[Modupdater] Finished Downloading " + modname);
+									UtilityMethods.DebugLogging("[Modupdater] Finished Downloading " + modname);
 									notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Finished Downloading " + modname, 5, HNotify.CheckSprite);
 
 
@@ -812,7 +816,7 @@ public class ModUpdater : Mod
 						}
 						else
 						{
-							Debug.Log("[Modupdater] There is no new version for " + modname);
+							UtilityMethods.DebugLogging("[Modupdater] There is no new version for " + modname);
 							if (OneModOnly)
 							{
 								notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
@@ -917,3 +921,17 @@ public static class ExtensionMethods
 		return new UnityAssetBundleRequestAwaiter(asyncOp);
 	}
 }
+
+public static class UtilityMethods {
+
+	public static void DebugLogging(string log)
+	{
+		if (ModUpdater.Logging)
+		{
+			Debug.Log(log);
+		}
+	}
+
+
+}
+

@@ -17,12 +17,19 @@
       "name": "autoUpdate",
       "text": "Automatically update mods",
       "access": "both",
-      "default": false 
+      "default": false
     },
     {
-      "type": "button", 
-      "name": "updateAllButton", 
-      "text": "Update all mods" 
+      "type": "button",
+      "name": "updateAllButton",
+      "text": "Update all mods"
+    },
+    {
+      "type": "checkbox",
+      "name": "ModUpdaterLogging",
+      "text": "Enable logging in the console",
+      "access": "both",
+      "default": false
     }
   ]
 }
