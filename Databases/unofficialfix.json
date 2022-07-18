@@ -34,26 +34,6 @@
       "slug": "augmented-items",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/AugmentedItemsmodded.rmod",
       "version": "1"
-    },
-    {
-      "slug": "islanditems",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.islanditems.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "bettercontrols",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.bettercontrols.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "lantern-shadows",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.lantern-shadows.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "longerdaynightcycles",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.longerdaynightcycles.rmod",
-      "version": "1"
     }
   ]
 }
