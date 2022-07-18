@@ -236,6 +236,16 @@ public class ModUpdater : Mod
 
 	}
 
+	public void ExtraSettingsAPI_SettingsClose() // Occurs when user closes the settings menu
+	{
+		if(Logging != ExtraSettingsAPI_GetCheckboxState("ModUpdaterLogging"))
+		{
+			Logging = ExtraSettingsAPI_GetCheckboxState("ModUpdaterLogging");
+		}
+
+
+	}
+
 
 	//This is actually no more only for unofficial fixes. It's for getting all the Database stuff
 	public static async Task GetUnofficialFixes(string url, string type)
