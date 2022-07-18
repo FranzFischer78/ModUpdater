@@ -238,7 +238,7 @@ public class ModUpdater : Mod
 
 	public void ExtraSettingsAPI_SettingsClose() // Occurs when user closes the settings menu
 	{
-		if(Logging != ExtraSettingsAPI_GetCheckboxState("ModUpdaterLogging"))
+		if (Logging != ExtraSettingsAPI_GetCheckboxState("ModUpdaterLogging"))
 		{
 			Logging = ExtraSettingsAPI_GetCheckboxState("ModUpdaterLogging");
 		}
@@ -287,14 +287,64 @@ public class ModUpdater : Mod
 
 	public static async Task CheckForUpdates()
 	{
+		UtilityMethods.DebugLogging("[Modupdater] Check for dependencies");
+
+		bool ExtraSettingsFound = false;
+		bool ModUtilsFound = false;
+
 		for (int i = 0; i < HMLLibrary.ModManagerPage.modList.ToArray().Length; i++)
 		{
+			if (HMLLibrary.ModManagerPage.modList[i].jsonmodinfo.name == "Extra Settings API")
+			{
+				ExtraSettingsFound = true;
+				UtilityMethods.DebugLogging("[Modupdater] Found extra settings");
+				if (HMLLibrary.ModManagerPage.modList[i].modinfo.modState != ModInfo.ModStateEnum.running || HMLLibrary.ModManagerPage.modList[i].modinfo.modState != ModInfo.ModStateEnum.compiling)
+				{
+					DefaultConsoleCommands.ModLoad(new string[] { "Extra Settings API" });
+				}
+
+			}
+			if (HMLLibrary.ModManagerPage.modList[i].jsonmodinfo.name == "ModUtils")
+			{
+				ModUtilsFound = true;
+				UtilityMethods.DebugLogging("[Modupdater] Found mod utils");
+				if (HMLLibrary.ModManagerPage.modList[i].modinfo.modState != ModInfo.ModStateEnum.running || HMLLibrary.ModManagerPage.modList[i].modinfo.modState != ModInfo.ModStateEnum.compiling)
+				{
+					DefaultConsoleCommands.ModLoad(new string[] { "ModUtils" });
+				}
+			}
+
 			Task UpdateTask = (Task)CheckForUpdateFunc(HMLLibrary.ModManagerPage.modList[i].jsonmodinfo.name);
 			await UpdateTask;
 
 
+
+
+
+
 		}
+
+
+		if (!ExtraSettingsFound)
+		{
+			UtilityMethods.DebugLogging("[Modupdater] Extra settings not found. Downloading it!");
+			await (Task)UtilityMethods.DownloadFile("https://www.raftmodding.com/mods/extra-settings-api/download?ignoreVirusScan=true", "extra-settings-api");
+		}
+		if (!ModUtilsFound)
+		{
+			UtilityMethods.DebugLogging("[Modupdater] Modutils not found. Downloading it!");
+			await (Task)UtilityMethods.DownloadFile("https://www.raftmodding.com/mods/modutils/download?ignoreVirusScan=true", "modutils");
+
+		}
+
+
+
+
 	}
+
+
+
+
 
 	public void OnModUnload()
 	{
@@ -633,7 +683,7 @@ public class ModUpdater : Mod
 		UtilityMethods.DebugLogging("[Modupdater] Update mod " + modname);
 
 
-		
+
 
 		//Debug.Log("Try index assert");
 
@@ -932,13 +982,47 @@ public static class ExtensionMethods
 	}
 }
 
-public static class UtilityMethods {
+public static class UtilityMethods
+{
 
 	public static void DebugLogging(string log)
 	{
 		if (ModUpdater.Logging)
 		{
 			Debug.Log(log);
+		}
+	}
+
+	public static async Task DownloadFile(string url, string slug)
+	{
+		Directory.CreateDirectory(ModUpdater.Temppath);
+
+
+		UnityWebRequest uwrr = new UnityWebRequest(url);
+		uwrr.downloadHandler = new DownloadHandlerBuffer();
+		UtilityMethods.DebugLogging("[Modupdater] Downloading...");
+		await uwrr.SendWebRequest();
+
+
+
+		if (uwrr.isNetworkError)
+		{
+			UtilityMethods.DebugLogging("[Modupdater] Error While Sending: " + uwrr.error);
+		}
+		else
+		{
+			byte[] results = uwrr.downloadHandler.data;
+
+
+			System.IO.File.WriteAllBytes(ModUpdater.Temppath + @"\modinstaller." + slug + ".rmod", results);
+
+
+
+			//Copy new one
+			File.Copy(ModUpdater.Temppath + @"\modinstaller." + slug + ".rmod", @"mods\modinstaller." + slug + ".rmod", true);
+			UtilityMethods.DebugLogging("[Modupdater] Finished Downloading ");
+
+
 		}
 	}
 
