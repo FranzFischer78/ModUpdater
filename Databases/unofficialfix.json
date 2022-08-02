@@ -39,6 +39,11 @@
       "slug": "hatsmod",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.hatsmod.rmod",
       "version": "1"
+    },
+    {
+      "slug": "sharkalarm",
+      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/SharkAlarm_2.3.1.rmod",
+      "version": "1"
     }
   ]
 }
