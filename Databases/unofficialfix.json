@@ -1,28 +1,8 @@
 {
   "urls": [
     {
-      "slug": "biggerplots",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/BiggerPlots_1.3.1modded.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "painteverything",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.painteverythingmodded.rmod",
-      "version": "1"
-    },
-    {
       "slug": "waterwheel",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.waterwheel-unofficialmodded.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "name-your-shark",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/name-your-sharkmodded.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "recycle-your-metal",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/RecycleYourMetal_1.2.0modded.rmod",
       "version": "1"
     },
     {
@@ -38,11 +18,6 @@
     {
       "slug": "hatsmod",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.hatsmod.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "sharkalarm",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/SharkAlarm_2.3.1.rmod",
       "version": "1"
     }
   ]
