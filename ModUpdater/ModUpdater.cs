@@ -386,7 +386,7 @@ public class ModUpdater : Mod
 		notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.spinning, "Updating Mods...");
 		DidAtLeastOneUpdate = false;
 		await UpdateTask;
-		notification.Close();
+		notification.Close(); 
 		if (DidAtLeastOneUpdate)
 		{
 			notification = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Finished Updating! Restart the Game!", 5, HNotify.CheckSprite);
