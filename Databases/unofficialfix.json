@@ -14,6 +14,11 @@
       "slug": "hatsmod",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.hatsmod.rmod",
       "version": "1"
+    },
+    {
+      "slug": "shark-attack-delayed",
+      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/shark-attack-delayed-unofficial-fix.rmod",
+      "version": "1"
     }
   ]
 }
