@@ -15,6 +15,14 @@
     {
       "slug": "modelectricity",
       "alt-slug": "electricity-mod"
+    },
+    {
+      "slug": "storage-labels",
+      "alt-slug": "uiplus"
+    },
+    {
+      "slug": "show-tank-capacity",
+      "alt-slug": "uiplus"
     }
 
   ]
