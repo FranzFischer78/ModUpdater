@@ -1,4 +1,6 @@
-﻿using Newtonsoft.Json.Linq;
+﻿using HMLLibrary;
+using Newtonsoft.Json.Linq;
+using RaftModLoader;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -75,11 +77,11 @@ public class ModUpdater : Mod
 		modCache.Clear();
 
 		Debug.Log("[Modupdater] Loading unofficial fixes");
-		Task GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/unofficialfix.json", "unofficial");
+		Task GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/unofficialfix.json", "unofficial", 1);
 		await GetFixes;
-		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/outdated.json", "outdated");
+		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/outdated.json", "outdated", 1);
 		await GetFixes;
-		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/outdatedalts.json", "outdatedAlts");
+		GetFixes = (Task)GetUnofficialFixes("https://raw.githubusercontent.com/FranzFischer78/ModUpdater/master/Databases/outdatedalts.json", "outdatedAlts", 1);
 		await GetFixes;
 		Debug.Log("ModUpdater has been loaded!");
 		Task CheckForUpdatesTask = (Task)CheckForUpdates();
@@ -248,41 +250,60 @@ public class ModUpdater : Mod
 
 
 	//This is actually no more only for unofficial fixes. It's for getting all the Database stuff
-	public static async Task GetUnofficialFixes(string url, string type)
+	public static async Task GetUnofficialFixes(string url, string type, int attempt)
 	{
-
-		UnityWebRequest uwrrrr = UnityWebRequest.Get(url);
-		await uwrrrr.SendWebRequest();
-
-		if (uwrrrr.isNetworkError)
+		if (attempt <= 3)
 		{
-			//Debug.Log("Error While Sending: " + uwrrrr.error);
-			Debug.Log("[Modupdater] Couldn't get unnoficial Fixes. Trying again!");
-			Debug.Log("[Modupdater] Loading unofficial fixes...");
-			Task GetFixes = (Task)GetUnofficialFixes(url, type);
-			await GetFixes;
+			Debug.Log("[Modupdater] Loading "+type+"...");
+			UnityWebRequest uwrrrr = UnityWebRequest.Get(url);
+			await uwrrrr.SendWebRequest();
 
+			if (uwrrrr.isNetworkError)
+			{
+				//Debug.Log("Error While Sending: " + uwrrrr.error);
+				Debug.Log("[Modupdater] Couldn't get the data for " + type + ". Trying again! Attempt " + attempt.ToString() + " failed with error: " + uwrrrr.error);
+				Task GetFixes = (Task)GetUnofficialFixes(url, type, attempt + 1);
+				await GetFixes;
+
+			}
+			else
+			{
+				Debug.Log("[Modupdater] Got list of unofficial Fixes!");
+
+				switch (type)
+				{
+					case "unofficial":
+						UnofficialFixes = uwrrrr.downloadHandler.text;
+						break;
+					case "outdated":
+						OutdatedMods = uwrrrr.downloadHandler.text;
+						break;
+					case "outdatedAlts":
+						OutdatedModsWithAlts = uwrrrr.downloadHandler.text;
+						break;
+
+				}
+
+				//Debug.Log(UnofficialFixes);
+			}
 		}
 		else
 		{
-			Debug.Log("[Modupdater] Got list of unofficial Fixes!");
-
 			switch (type)
 			{
 				case "unofficial":
-					UnofficialFixes = uwrrrr.downloadHandler.text;
+					UnofficialFixes = "NODATA";
 					break;
 				case "outdated":
-					OutdatedMods = uwrrrr.downloadHandler.text;
+					OutdatedMods = "NODATA";
 					break;
 				case "outdatedAlts":
-					OutdatedModsWithAlts = uwrrrr.downloadHandler.text;
+					OutdatedModsWithAlts = "NODATA";
 					break;
 
 			}
-
-			//Debug.Log(UnofficialFixes);
 		}
+
 	}
 
 	public static async Task CheckForUpdates()

@@ -1,23 +1,8 @@
 {
   "urls": [
     {
-      "slug": "waterwheel",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.waterwheel-unofficialmodded.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "solarpanel",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/SolarPanel_1.5.0modded.rmod",
-      "version": "1"
-    },
-    {
       "slug": "hatsmod",
       "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.hatsmod.rmod",
-      "version": "1"
-    },
-    {
-      "slug": "shark-attack-delayed",
-      "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/shark-attack-delayed-unofficial-fix.rmod",
       "version": "1"
     }
   ]

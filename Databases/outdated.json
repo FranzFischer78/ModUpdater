@@ -16,9 +16,6 @@
       "slug": "the-tweaker-mod"
     },
     {
-      "slug": "azquest"
-    },
-    {
       "slug": "moretrash"
     },
     {
@@ -26,11 +23,13 @@
     },
     {
       "slug": "craft-from-storage"
+    },
+    {
+      "slug": "deathstrandingbackpack"
+    },
+    {
+      "slug": "better-cropplots"
     }
 
   ]
-
-
-
-
 }

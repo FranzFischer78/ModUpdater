@@ -23,6 +23,14 @@
     {
       "slug": "show-tank-capacity",
       "alt-slug": "uiplus"
+    },
+    {
+      "slug": "pausemod",
+      "alt-slug": "betterpause"
+    },
+    {
+      "slug": "friendly-sprinkler",
+      "alt-slug": "configmachines"
     }
 
   ]
