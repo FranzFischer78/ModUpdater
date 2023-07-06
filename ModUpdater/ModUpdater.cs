@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Networking;
 using UnityEngine.UI;
@@ -135,7 +136,7 @@ public class ModUpdater : Mod
 			float width = modlistEntryGO.GetComponent<RectTransform>().rect.width;
 			float xpos = width * 0.75f;
 
-			Text ColorCode = modlistEntry.modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>();
+			TextMeshProUGUI ColorCode = modlistEntry.modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>();
 
 			if (ColorCode.color != HMLLibrary.ModManagerPage.orangeColor)
 			{
@@ -422,6 +423,8 @@ public class ModUpdater : Mod
 
 	public static async Task CheckForUpdateFunc(string modname)
 	{
+
+
 		HNotification notification2;
 
 		bool UnofficialFix = false;
@@ -451,13 +454,14 @@ public class ModUpdater : Mod
 			}
 		}
 
+
 		if (index == 9999)
 		{
 			UtilityMethods.DebugLogging("[Modupdater] The mod failed to Update! Does it even exist?");
 			//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "The mod failed to Update! Does it even exist?", 5, HNotify.ErrorSprite);
 			HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown";
 
-			HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+			HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
 
 			misconfigured = true;
 
@@ -469,7 +473,7 @@ public class ModUpdater : Mod
 				UtilityMethods.DebugLogging("[Modupdater] Update URL contains a wrong slug! Please ping the mod author!");
 				//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours?", 5, HNotify.ErrorSprite);
 				HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
-				HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+				HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
 				misconfigured = true;
 			}
 			else if (HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.IsNullOrEmpty())
@@ -477,7 +481,7 @@ public class ModUpdater : Mod
 				UtilityMethods.DebugLogging("[Modupdater] Update URL is empty! Please ping the mod author!");
 				//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours?", 5, HNotify.ErrorSprite);
 				HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
-				HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+				HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
 				misconfigured = true;
 			}
 			else
@@ -486,14 +490,14 @@ public class ModUpdater : Mod
 
 				UnityWebRequest uwr = UnityWebRequest.Get(HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl);
 				await uwr.SendWebRequest();
-
+				
 				if (uwr.isNetworkError)
 				{
 					UtilityMethods.DebugLogging("[Modupdater] Error While Sending: " + uwr.error);
 					UtilityMethods.DebugLogging("[Modupdater] Couldn't update mod: " + modname);
 					//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Couldn't update mod: " + modname, 5, HNotify.ErrorSprite);
 					HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown";
-					HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+					HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
 				}
 				else
 				{
@@ -506,7 +510,7 @@ public class ModUpdater : Mod
 						UtilityMethods.DebugLogging("[Modupdater] Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me and the author... Raft is not Shark Food and Lantern Physics got this issue.");
 						//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours? If not it may be misconfigured. Update the mod manually and ping me (FranzFischer#6710) and the author... Raft is not Shark Food got this issue." + modname, 5, HNotify.ErrorSprite);
 						HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unknown/Misconfigured";
-						HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+						HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
 						misconfigured = true;
 					}
 					else
@@ -634,7 +638,7 @@ public class ModUpdater : Mod
 							if (UnofficialFix == true)
 							{
 								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unofficial Fix available!";
-								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.blueColor;
+								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.blueColor;
 							}
 							else
 							{
@@ -643,18 +647,18 @@ public class ModUpdater : Mod
 									if (!OutdatedAlt.IsNullOrEmpty())
 									{
 										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uprade available)";
-										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.redColor;
+										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.redColor;
 									}
 									else
 									{
 										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uninstallation recommended)";
-										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.orangeColor;
+										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
 									}
 								}
 								else
 								{
 									HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Update available";
-									HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.redColor;
+									HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.redColor;
 								}
 							}
 						}
@@ -663,7 +667,7 @@ public class ModUpdater : Mod
 							UtilityMethods.DebugLogging("[Modupdater] There is no new version for " + modname);
 							//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
 							HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Up to date";
-							HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<UnityEngine.UI.Text>().color = HMLLibrary.ModManagerPage.greenColor;
+							HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.greenColor;
 
 						}
 					}
