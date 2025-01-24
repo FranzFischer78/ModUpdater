@@ -138,7 +138,7 @@ public class ModUpdater : Mod
 
 			TextMeshProUGUI ColorCode = modlistEntry.modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>();
 
-			if (ColorCode.color != HMLLibrary.ModManagerPage.orangeColor)
+			if (ColorCode.color != HMLLibrary.ModManagerPage.orangeColor || ColorCode.color != HMLLibrary.ModManagerPage.yellowColor)
 			{
 				if (ColorCode.color == HMLLibrary.ModManagerPage.blueColor || ColorCode.color == HMLLibrary.ModManagerPage.redColor)
 				{
@@ -490,7 +490,7 @@ public class ModUpdater : Mod
 
 				UnityWebRequest uwr = UnityWebRequest.Get(HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl);
 				await uwr.SendWebRequest();
-				
+
 				if (uwr.isNetworkError)
 				{
 					UtilityMethods.DebugLogging("[Modupdater] Error While Sending: " + uwr.error);
@@ -515,7 +515,6 @@ public class ModUpdater : Mod
 					}
 					else
 					{
-
 						string LocalVersion = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.version;
 						string RemoteVersion = WWWResult.ToString();
 
@@ -529,81 +528,48 @@ public class ModUpdater : Mod
 						var localSemVersion = new SemVer(LocalForSem);
 						var remoteSemVersion = new SemVer(RemoteForSem);
 
-						slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
-						//Debug.Log(slug);
-
-
-						//Unofficial fix check
-
-						int UPATCHVersion = 0;
-
-						if (UnofficialFixes.Contains(slug))
-						{
-							JObject JsonContent = JObject.Parse(UnofficialFixes);
-							JArray item = (JArray)JsonContent["urls"];
-
-							for (int i = 0; i < item.Count; i++)
-							{
-
-
-								string nameofitem = (string)item[i]["slug"];
-								if (nameofitem == slug)
-								{
-									UPATCHVersion = Convert.ToInt32((string)item[i]["version"]);
-									UtilityMethods.DebugLogging(UPATCHVersion.ToString());
-									break;
-								}
-								else
-								{
-
-								}
-							}
-							int LocalUpatch = 0;
-							if (LocalVersion.Contains("UPATCH".ToLower()) == true)
-							{
-								char[] separators = new char[] { '[', ']' };
-
-								/*Debug.Log(LocalVersion.Split(separators)[0]);
-								Debug.Log(LocalVersion.Split(separators)[1]);
-
-								Debug.Log(LocalVersion.Split(separators)[1].Split('h')[1]);*/
-
-								LocalUpatch = Convert.ToInt32(LocalVersion.Split(separators)[1].Split('h')[1]);
-
-								if (UPATCHVersion != 0 && LocalUpatch != 0)
-								{
-
-									if (UPATCHVersion > LocalUpatch)
-									{
-										UnofficialFix = true;
-									}
-									else
-									{
-										UnofficialFix = false;
-									}
-
-								}
-
-							}
-
-							//To patch all old versions containing [unofficial]
-							if (LocalVersion.Contains("[unofficial]".ToLower()) == true || (LocalVersion.Contains("[unofficial]".ToLower()) == false && LocalVersion.Contains("UPATCH".ToLower()) == false))
-							{
-								UnofficialFix = true;
-							}
-
+						
+						var updateUrlSplit = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/');
+						bool splitException = false;
+						try {
+							string check = updateUrlSplit[6]; 
 						}
-
-						//Oudated check:
-						if (OutdatedMods.Contains(slug))
+						catch (Exception ex)
 						{
-							Outdated = true;
-
-							if (OutdatedModsWithAlts.Contains(slug))
+							splitException = true;
+						}
+						if (splitException || !HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Contains(@"https://www.raftmodding.com/api/v1/mods"))
+						{
+							UtilityMethods.DebugLogging("[Modupdater] The mod does not seem to be from Raftmodding.com as it's update url does not follow the standard scheme. This might be a patreon only mod. You will need to update that mod yourself.");
+							//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "Mod not found on Raftmodding Server. Is it one of yours?", 5, HNotify.ErrorSprite);
+							if (remoteSemVersion > localSemVersion)
 							{
+								UtilityMethods.DebugLogging("[Modupdater] There is a new version for " + modname);
+								notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
+								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Update available";
+								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.yellowColor;
+							}
+							else
+							{
+								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Up to date";
+								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.greenColor;
+							}
+							misconfigured = true;
+						}
+						else
+						{
+							slug = HMLLibrary.ModManagerPage.modList[index].jsonmodinfo.updateUrl.Split('/')[6];
+							//Debug.Log(slug);
 
-								JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
-								JArray item = (JArray)JsonContent["outdatedmods"];
+
+							//Unofficial fix check
+
+							int UPATCHVersion = 0;
+
+							if (UnofficialFixes.Contains(slug))
+							{
+								JObject JsonContent = JObject.Parse(UnofficialFixes);
+								JArray item = (JArray)JsonContent["urls"];
 
 								for (int i = 0; i < item.Count; i++)
 								{
@@ -612,63 +578,127 @@ public class ModUpdater : Mod
 									string nameofitem = (string)item[i]["slug"];
 									if (nameofitem == slug)
 									{
-										OutdatedAlt = (string)item[i]["alt-slug"];
+										UPATCHVersion = Convert.ToInt32((string)item[i]["version"]);
+										UtilityMethods.DebugLogging(UPATCHVersion.ToString());
 										break;
-									}
-								}
-							}
-						}
-
-
-
-
-						//This is just for debugging purpose 
-						UtilityMethods.DebugLogging(LocalVersion);
-
-						//Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
-
-						//(LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false
-						//Check for version
-						if (remoteSemVersion > localSemVersion || UnofficialFix || Outdated)
-						{
-							NeedsUpdate = true;
-							UtilityMethods.DebugLogging("[Modupdater] There is a new version for " + modname);
-							notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
-
-							if (UnofficialFix == true)
-							{
-								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unofficial Fix available!";
-								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.blueColor;
-							}
-							else
-							{
-								if (Outdated)
-								{
-									if (!OutdatedAlt.IsNullOrEmpty())
-									{
-										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uprade available)";
-										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.redColor;
 									}
 									else
 									{
-										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uninstallation recommended)";
-										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
+
 									}
+								}
+								int LocalUpatch = 0;
+								if (LocalVersion.Contains("UPATCH".ToLower()) == true)
+								{
+									char[] separators = new char[] { '[', ']' };
+
+									/*Debug.Log(LocalVersion.Split(separators)[0]);
+									Debug.Log(LocalVersion.Split(separators)[1]);
+
+									Debug.Log(LocalVersion.Split(separators)[1].Split('h')[1]);*/
+
+									LocalUpatch = Convert.ToInt32(LocalVersion.Split(separators)[1].Split('h')[1]);
+
+									if (UPATCHVersion != 0 && LocalUpatch != 0)
+									{
+
+										if (UPATCHVersion > LocalUpatch)
+										{
+											UnofficialFix = true;
+										}
+										else
+										{
+											UnofficialFix = false;
+										}
+
+									}
+
+								}
+
+								//To patch all old versions containing [unofficial]
+								if (LocalVersion.Contains("[unofficial]".ToLower()) == true || (LocalVersion.Contains("[unofficial]".ToLower()) == false && LocalVersion.Contains("UPATCH".ToLower()) == false))
+								{
+									UnofficialFix = true;
+								}
+
+							}
+
+							//Oudated check:
+							if (OutdatedMods.Contains(slug))
+							{
+								Outdated = true;
+
+								if (OutdatedModsWithAlts.Contains(slug))
+								{
+
+									JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
+									JArray item = (JArray)JsonContent["outdatedmods"];
+
+									for (int i = 0; i < item.Count; i++)
+									{
+
+
+										string nameofitem = (string)item[i]["slug"];
+										if (nameofitem == slug)
+										{
+											OutdatedAlt = (string)item[i]["alt-slug"];
+											break;
+										}
+									}
+								}
+							}
+
+
+
+
+							//This is just for debugging purpose 
+							UtilityMethods.DebugLogging(LocalVersion);
+
+							//Debug.Log(LocalVersion.Contains("[UNOFFICIAL]".ToLower()));
+
+							//(LocalVersion != RemoteVersion || UnofficialFix) && noNewUnofficial == false
+							//Check for version
+							if (remoteSemVersion > localSemVersion || UnofficialFix || Outdated)
+							{
+								NeedsUpdate = true;
+								UtilityMethods.DebugLogging("[Modupdater] There is a new version for " + modname);
+								notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is a new version for " + modname, 5, HNotify.CheckSprite);
+
+								if (UnofficialFix == true)
+								{
+									HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Unofficial Fix available!";
+									HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.blueColor;
 								}
 								else
 								{
-									HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Update available";
-									HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.redColor;
+									if (Outdated)
+									{
+										if (!OutdatedAlt.IsNullOrEmpty())
+										{
+											HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uprade available)";
+											HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.redColor;
+										}
+										else
+										{
+											HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "OUTDATED (Uninstallation recommended)";
+											HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.orangeColor;
+										}
+									}
+									else
+									{
+										HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Update available";
+										HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.redColor;
+									}
 								}
 							}
-						}
-						else
-						{
-							UtilityMethods.DebugLogging("[Modupdater] There is no new version for " + modname);
-							//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
-							HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Up to date";
-							HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.greenColor;
+							else
+							{
+								UtilityMethods.DebugLogging("[Modupdater] There is no new version for " + modname);
+								//notification2 = FindObjectOfType<HNotify>().AddNotification(HNotify.NotificationType.normal, "There is no new version for " + modname, 5, HNotify.ErrorSprite);
+								HMLLibrary.ModManagerPage.modList[index].modinfo.versionTooltip.GetComponentInChildren<TMPro.TMP_Text>().text = "Up to date";
+								HMLLibrary.ModManagerPage.modList[index].modinfo.ModlistEntry.transform.Find("ModVersionText").GetComponent<TMPro.TextMeshProUGUI>().color = HMLLibrary.ModManagerPage.greenColor;
 
+							}
 						}
 					}
 				}
