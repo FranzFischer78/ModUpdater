@@ -1,0 +1,5 @@
+{
+  "slug": "hatsmod",
+  "discord-url": "https://github.com/FranzFischer78/ModUpdater/raw/master/UnofficialFixes/modinstaller.hatsmod.rmod",
+  "version": "1"
+}

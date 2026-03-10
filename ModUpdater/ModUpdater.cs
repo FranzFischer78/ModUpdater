@@ -312,7 +312,6 @@ public class ModUpdater : Mod
 		UtilityMethods.DebugLogging("[Modupdater] Check for dependencies");
 
 		bool ExtraSettingsFound = false;
-		bool ModUtilsFound = false;
 
 		for (int i = 0; i < HMLLibrary.ModManagerPage.modList.ToArray().Length; i++)
 		{
@@ -325,15 +324,6 @@ public class ModUpdater : Mod
 					DefaultConsoleCommands.ModLoad(new string[] { "Extra Settings API" });
 				}
 
-			}
-			if (HMLLibrary.ModManagerPage.modList[i].jsonmodinfo.name == "ModUtils")
-			{
-				ModUtilsFound = true;
-				UtilityMethods.DebugLogging("[Modupdater] Found mod utils");
-				if (HMLLibrary.ModManagerPage.modList[i].modinfo.modState != ModInfo.ModStateEnum.running || HMLLibrary.ModManagerPage.modList[i].modinfo.modState != ModInfo.ModStateEnum.compiling)
-				{
-					DefaultConsoleCommands.ModLoad(new string[] { "ModUtils" });
-				}
 			}
 
 			Task UpdateTask = (Task)CheckForUpdateFunc(HMLLibrary.ModManagerPage.modList[i].jsonmodinfo.name);
@@ -351,12 +341,6 @@ public class ModUpdater : Mod
 		{
 			UtilityMethods.DebugLogging("[Modupdater] Extra settings not found. Downloading it!");
 			await (Task)UtilityMethods.DownloadFile("https://www.raftmodding.com/mods/extra-settings-api/download?ignoreVirusScan=true", "extra-settings-api");
-		}
-		if (!ModUtilsFound)
-		{
-			UtilityMethods.DebugLogging("[Modupdater] Modutils not found. Downloading it!");
-			await (Task)UtilityMethods.DownloadFile("https://www.raftmodding.com/mods/modutils/download?ignoreVirusScan=true", "modutils");
-
 		}
 
 
