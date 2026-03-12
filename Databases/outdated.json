@@ -1,38 +1,91 @@
 {
   "outdatedmods": [
     {
+      "slug": "raftipelago"
+    },
+    {
+      "slug": "autoexec"
+    },
+    {
+      "slug": "raftvr-for-flatscreen-players"
+    },
+    {
+      "slug": "lantern-shadows"
+    },
+    {
+      "slug": "comfortable-inventory"
+    },
+    {
+      "slug": "dredgers"
+    },
+    {
+      "slug": "customflags"
+    },
+    {
+      "slug": "bedtime"
+    },
+    {
+      "slug": "raftmmo"
+    },
+    {
+      "slug": "shark-attack-delayed"
+    },
+    {
+      "slug": "azquest"
+    },
+    {
+      "slug": "fertilizermod"
+    },
+    {
+      "slug": "auto-sorter"
+    },
+    {
+      "slug": "modutils"
+    },
+    {
+      "slug": "raftvr"
+    },
+    {
+      "slug": "signposts"
+    },
+    {
+      "slug": "simple-charger"
+    },
+    {
+      "slug": "recursive-placement"
+    },
+    {
+      "slug": "voyage-overhaul-ex"
+    },
+    {
+      "slug": "stackable-placeables"
+    },
+    {
+      "slug": "minimap"
+    },
+    {
+      "slug": "filterednets"
+    },
+    {
       "slug": "devtools"
-    },
-    {
-      "slug": "raftonsand"
-    },
-    {
-      "slug": "basicspawner"
-    },
-    {
-      "slug": "crouchtoggle"
-    },
-    {
-      "slug": "the-tweaker-mod"
     },
     {
       "slug": "moretrash"
     },
     {
-      "slug": "uiscaler"
+      "slug": "modelectricity"
     },
     {
-      "slug": "craft-from-storage"
+      "slug": "power-distributor"
     },
     {
-      "slug": "deathstrandingbackpack"
+      "slug": "server-moderation"
+    },
+    {
+      "slug": "voice-chat"
     },
     {
       "slug": "better-cropplots"
-    },
-    {
-      "slug": "modutils"
     }
-
   ]
 }
