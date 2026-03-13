@@ -67,25 +67,40 @@
       "slug": "filterednets"
     },
     {
-      "slug": "devtools"
-    },
-    {
-      "slug": "moretrash"
-    },
-    {
-      "slug": "modelectricity"
-    },
-    {
-      "slug": "power-distributor"
+      "slug": "voice-chat"
     },
     {
       "slug": "server-moderation"
     },
     {
-      "slug": "voice-chat"
+      "slug": "power-distributor"
     },
     {
-      "slug": "better-cropplots"
+      "slug": "frequency-finder"
+    },
+    {
+      "slug": "garbagesucker"
+    },
+    {
+      "slug": "raft-to-discord-r2d"
+    },
+    {
+      "slug": "pausemod"
+    },
+    {
+      "slug": "modelectricity"
+    },
+    {
+      "slug": "moretrash"
+    },
+    {
+      "slug": "sitandfish"
+    },
+    {
+      "slug": "basicspawner"
+    },
+    {
+      "slug": "devtools"
     }
   ]
 }
