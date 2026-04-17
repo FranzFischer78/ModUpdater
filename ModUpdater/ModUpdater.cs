@@ -607,28 +607,55 @@ public class ModUpdater : Mod
 
 							}
 
-							//Oudated check:
-							if (OutdatedMods.Contains(slug))
+							// Outdated check:
+							if (!string.IsNullOrEmpty(OutdatedMods) && OutdatedMods != "NODATA")
 							{
-								Outdated = true;
-
-								if (OutdatedModsWithAlts.Contains(slug))
+								try
 								{
-
-									JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
-									JArray item = (JArray)JsonContent["outdatedmods"];
-
-									for (int i = 0; i < item.Count; i++)
+									JObject OutdatedJsonContent = JObject.Parse(OutdatedMods);
+									JArray outdatedArray = (JArray)OutdatedJsonContent["outdatedmods"];
+									if (outdatedArray != null)
 									{
-
-
-										string nameofitem = (string)item[i]["slug"];
-										if (nameofitem == slug)
+										for (int i = 0; i < outdatedArray.Count; i++)
 										{
-											OutdatedAlt = (string)item[i]["alt-slug"];
-											break;
+											string nameofitem = (string)outdatedArray[i]["slug"];
+											if (nameofitem == slug)
+											{
+												Outdated = true;
+												break;
+											}
 										}
 									}
+								}
+								catch (Exception ex)
+								{
+									UtilityMethods.DebugLogging("[Modupdater] Failed to parse OutdatedMods JSON: " + ex.Message);
+								}
+							}
+
+							// If outdated and we have a mapping with alternatives, try to find alt-slug
+							if (Outdated && !string.IsNullOrEmpty(OutdatedModsWithAlts) && OutdatedModsWithAlts != "NODATA")
+							{
+								try
+								{
+									JObject JsonContent = JObject.Parse(OutdatedModsWithAlts);
+									JArray item = (JArray)JsonContent["outdatedmods"];
+									if (item != null)
+									{
+										for (int i = 0; i < item.Count; i++)
+										{
+											string nameofitem = (string)item[i]["slug"];
+											if (nameofitem == slug)
+											{
+												OutdatedAlt = (string)item[i]["alt-slug"];
+												break;
+											}
+										}
+									}
+								}
+								catch (Exception ex)
+								{
+									UtilityMethods.DebugLogging("[Modupdater] Failed to parse OutdatedModsWithAlts JSON: " + ex.Message);
 								}
 							}
 
